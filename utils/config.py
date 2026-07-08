@@ -1,0 +1,2 @@
+EMBED_MODEL_ID = "allenai/specter2_base"
+EMBED_MODEL_MAX_TOKENS = 512
