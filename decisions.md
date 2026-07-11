@@ -22,3 +22,15 @@
 - The 512 cap is enforced on raw text, but headings are prepended after, so contextualized_text can run ~7–11 tokens over 512 and specter2 silently truncates the tail.
 - Accepted this small, front-safe loss rather than lowering the cap and fragmenting coherent sections into weaker chunks.
 
+## 2 adapters approach
+- embed source doc chunks with the proximity adapter (allenai/specter2, also called proximity/retrieval)
+- embed the user query at retrieval time with the adhoc_query adapter (allenai/specter2_adhoc_query).
+
+## Unqiue chunk-id
+- Currently going ahead with "filename_chunkid" as unique id of any chunk across all files
+- But above approach will also consider files where filename is different but content is 100% same. Ideally only one of those files should be considered.
+- At enterprise scale, dedup should happen at document ingestion stage (by doing hash of entire file content) i.e. "before" text extraction+chunking level.
+
+## Chunk embedding and Vector DB
+- For this build, batched embeddings will be stored directly in Vector DB without with retry + dead letter on failures
+- At enterprise scale, I'd add a DB-agnostic parquet embedding store as the source of truth, which will make Vector DB swappable + rebuilding will not be expensive 
